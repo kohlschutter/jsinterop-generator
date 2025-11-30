@@ -13,12 +13,8 @@ package(
 )
 
 jsinterop_generator_test(
-    name = "UnionTypes",
+    name = "uniontypes",
     srcs = ["uniontypes.js"],
-    expected_output = [
-        "ParentInterface.java.txt",
-        "Child.java.txt",
-        "Foo.java.txt",
-    ],
+    expected_output = glob(["*.java.txt"]),
     deps = ["//javatests/jsinterop/generator/externs/natives"],
 )

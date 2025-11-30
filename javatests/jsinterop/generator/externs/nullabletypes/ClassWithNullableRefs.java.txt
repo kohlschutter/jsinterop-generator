@@ -1,0 +1,230 @@
+package jsinterop.generator.externs.nullabletypes;
+
+import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsOverlay;
+import jsinterop.annotations.JsPackage;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
+import jsinterop.base.Js;
+import jsinterop.base.JsPropertyMap;
+import jsinterop.generator.externs.natives.JsArray;
+import org.jspecify.annotations.Nullable;
+
+@JsType(isNative = true, namespace = JsPackage.GLOBAL)
+public class ClassWithNullableRefs {
+  @JsType(isNative = true, name = "?", namespace = JsPackage.GLOBAL)
+  public interface AnonymousUnionTypeWithNullUnionType {
+    @JsOverlay
+    static ClassWithNullableRefs.@Nullable AnonymousUnionTypeWithNullUnionType of(
+        @Nullable Object o) {
+      return Js.cast(o);
+    }
+
+    @JsOverlay
+    default double asDouble() {
+      return Js.asDouble(this);
+    }
+
+    @JsOverlay
+    default @Nullable String asString() {
+      return Js.asString(this);
+    }
+
+    @JsOverlay
+    default boolean isDouble() {
+      return (Object) this instanceof Double;
+    }
+
+    @JsOverlay
+    default boolean isString() {
+      return (Object) this instanceof String;
+    }
+  }
+
+  @JsFunction
+  public interface NullableAnonymousFunctionTypeRefFn {
+    boolean onInvoke(String p0);
+  }
+
+  @JsType(isNative = true, name = "?", namespace = JsPackage.GLOBAL)
+  public interface NullableAnonymousRecordRefFieldType {
+    @JsOverlay
+    static ClassWithNullableRefs.NullableAnonymousRecordRefFieldType create() {
+      return Js.uncheckedCast(JsPropertyMap.of());
+    }
+
+    @JsProperty
+    String getBar();
+
+    @JsProperty
+    double getFoo();
+
+    @JsProperty
+    void setBar(String bar);
+
+    @JsProperty
+    void setFoo(double foo);
+  }
+
+  @JsType(isNative = true, name = "?", namespace = JsPackage.GLOBAL)
+  public interface NullableAnonymousUnionTypeRef2UnionType {
+    @JsOverlay
+    static ClassWithNullableRefs.@Nullable NullableAnonymousUnionTypeRef2UnionType of(
+        @Nullable Object o) {
+      return Js.cast(o);
+    }
+
+    @JsOverlay
+    default double asDouble() {
+      return Js.asDouble(this);
+    }
+
+    @JsOverlay
+    default @Nullable String asString() {
+      return Js.asString(this);
+    }
+
+    @JsOverlay
+    default boolean isDouble() {
+      return (Object) this instanceof Double;
+    }
+
+    @JsOverlay
+    default boolean isString() {
+      return (Object) this instanceof String;
+    }
+  }
+
+  @JsType(isNative = true, name = "?", namespace = JsPackage.GLOBAL)
+  public interface NullableAnonymousUnionTypeRefUnionType {
+    @JsOverlay
+    static ClassWithNullableRefs.@Nullable NullableAnonymousUnionTypeRefUnionType of(
+        @Nullable Object o) {
+      return Js.cast(o);
+    }
+
+    @JsOverlay
+    default double asDouble() {
+      return Js.asDouble(this);
+    }
+
+    @JsOverlay
+    default @Nullable String asString() {
+      return Js.asString(this);
+    }
+
+    @JsOverlay
+    default boolean isDouble() {
+      return (Object) this instanceof Double;
+    }
+
+    @JsOverlay
+    default boolean isString() {
+      return (Object) this instanceof String;
+    }
+  }
+
+  @JsType(isNative = true, name = "?", namespace = JsPackage.GLOBAL)
+  public interface NullableUnionTypeRefUnionType {
+    @JsOverlay
+    static ClassWithNullableRefs.@Nullable NullableUnionTypeRefUnionType of(@Nullable Object o) {
+      return Js.cast(o);
+    }
+
+    @JsOverlay
+    default double asDouble() {
+      return Js.asDouble(this);
+    }
+
+    @JsOverlay
+    default @Nullable String asString() {
+      return Js.asString(this);
+    }
+
+    @JsOverlay
+    default boolean isDouble() {
+      return (Object) this instanceof Double;
+    }
+
+    @JsOverlay
+    default boolean isString() {
+      return (Object) this instanceof String;
+    }
+  }
+
+  @JsType(isNative = true, name = "?", namespace = JsPackage.GLOBAL)
+  public interface UnionTypeWithNullRefUnionType {
+    @JsOverlay
+    static ClassWithNullableRefs.@Nullable UnionTypeWithNullRefUnionType of(@Nullable Object o) {
+      return Js.cast(o);
+    }
+
+    @JsOverlay
+    default double asDouble() {
+      return Js.asDouble(this);
+    }
+
+    @JsOverlay
+    default @Nullable String asString() {
+      return Js.asString(this);
+    }
+
+    @JsOverlay
+    default boolean isDouble() {
+      return (Object) this instanceof Double;
+    }
+
+    @JsOverlay
+    default boolean isString() {
+      return (Object) this instanceof String;
+    }
+  }
+
+  public ClassWithNullableRefs.@Nullable AnonymousUnionTypeWithNullUnionType
+      anonymousUnionTypeWithNull;
+  public ClassWithNullableRefs.@Nullable NullableAnonymousFunctionTypeRefFn
+      nullableAnonymousFunctionTypeRef;
+  public ClassWithNullableRefs.@Nullable NullableAnonymousRecordRefFieldType
+      nullableAnonymousRecordRef;
+  public ClassWithNullableRefs.@Nullable NullableAnonymousUnionTypeRefUnionType
+      nullableAnonymousUnionTypeRef;
+  public ClassWithNullableRefs.@Nullable NullableAnonymousUnionTypeRef2UnionType
+      nullableAnonymousUnionTypeRef2;
+  public @Nullable SimpleEnum nullableEnumRef;
+  public @Nullable NullableFunctionType nullableFunctionTypeRef;
+  public @Nullable SimpleInterface nullableInterfaceRef;
+  public @Nullable Double nullableNumber;
+  public @Nullable SimpleRecord nullableRecordRef;
+  public @Nullable String nullableString;
+  public @Nullable NullableTypeDefOfRecord nullableTypeDefOfRecordRef;
+  public ClassWithNullableRefs.@Nullable NullableUnionTypeRefUnionType nullableUnionTypeRef;
+  public @Nullable SimpleClass simpleClassRef;
+  public ClassWithNullableRefs.@Nullable UnionTypeWithNullRefUnionType unionTypeWithNullRef;
+
+  public native @Nullable Object methodWithArrayOfNullableElementParam(
+      JsArray<@Nullable String> foo);
+
+  @JsOverlay
+  public final @Nullable Object methodWithArrayOfNullableElementParam(@Nullable String[] foo) {
+    return methodWithArrayOfNullableElementParam(Js.<JsArray<@Nullable String>>uncheckedCast(foo));
+  }
+
+  public native @Nullable Object methodWithNullableArrayOfNullableElementParam(
+      @Nullable JsArray<@Nullable String> foo);
+
+  @JsOverlay
+  public final @Nullable Object methodWithNullableArrayOfNullableElementParam(
+      @Nullable String @Nullable [] foo) {
+    return methodWithNullableArrayOfNullableElementParam(
+        Js.<@Nullable JsArray<@Nullable String>>uncheckedCast(foo));
+  }
+
+  public native @Nullable Object methodWithNullableArrayParam(@Nullable JsArray<String> foo);
+
+  @JsOverlay
+  public final @Nullable Object methodWithNullableArrayParam(String @Nullable [] foo) {
+    return methodWithNullableArrayParam(Js.<@Nullable JsArray<String>>uncheckedCast(foo));
+  }
+
+  public native @Nullable SimpleRecord methodWithNullableParam(@Nullable SimpleInterface foo);
+}

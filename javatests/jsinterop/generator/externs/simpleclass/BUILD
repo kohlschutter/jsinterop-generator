@@ -13,16 +13,8 @@ package(
 )
 
 jsinterop_generator_test(
-    name = "SimpleClass",
+    name = "simpleclass",
     srcs = ["simpleclass.js"],
-    expected_output = [
-        "PrivateClass.java.txt",
-        "SimpleClass.java.txt",
-        "SimpleClass__Constants.java.txt",
-        "SimpleInterface.java.txt",
-        "SimpleInterface__Constants.java.txt",
-        "SimpleStructuralInterface.java.txt",
-        "DeprecatedInterface.java.txt",
-    ],
+    expected_output = glob(["*.java.txt"]),
     deps = ["//javatests/jsinterop/generator/externs/natives"],
 )

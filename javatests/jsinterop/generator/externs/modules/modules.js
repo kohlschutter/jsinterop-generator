@@ -6,59 +6,129 @@
 /**
  * @const
  */
-var foo = {};
+var namespace = {};
 
 /**
  * @const
  */
-foo.bar = {};
+namespace.nestednamespace = {};
 
 /**
- * @type {foo.FooInterface}
+ * Property referring the type of the enclosing namespace.
+ *
+ * @type {namespace.NamespacedInterface}
  */
-foo.bar.fooProperty;
+namespace.nestednamespace.staticProperty;
 
 /**
  * @return {undefined}
  */
-foo.bar.bar = function() {};
+namespace.nestednamespace.staticFunction = function() {};
 
 /**
  * @interface
  */
-foo.bar.BarInterface = function() {};
+namespace.nestednamespace.InterfaceFromNestedNamespace = function() {};
 
 /**
-* @type {foo.bar.BarInterface}
-*/
-foo.fooProperty;
-
-/**
- * @return {undefined}
+ * Property referring the type of the nested namespace.
+ *
+ * @type {namespace.nestednamespace.InterfaceFromNestedNamespace}
  */
-foo.foo = function() {};
+namespace.staticProperty;
 
 /**
  * @interface
  */
-foo.FooInterface = function() {};
+namespace.NamespacedInterface = function() {};
+
+
+/**
+ * @typedef {{
+ *      foo: number,
+ *      bar: string
+ *      }}
+ */
+namespace.NamespacedTypeDefOfRecord;
+
+/**
+ * @type {namespace.NamespacedTypeDefOfRecord}
+ */
+namespace.namespacedTypeDefOfRecordRef;
+
+/**
+ * @record
+ */
+namespace.NamespacedRecord = function() {};
+
+/**
+ * @constructor
+ */
+namespace.NamespacedClass = function() {};
+
+/**
+ * @typedef {function(string):boolean}
+ */
+namespace.NamespacedFunctionType;
+
+/** @type {namespace.NamespacedFunctionType} */
+namespace.namespacedFunctionTypeRef;
+
+/**
+ * @typedef {string|number}
+ */
+namespace.NamespacedUnionType;
+
+/** @type {namespace.NamespacedUnionType} */
+namespace.namespacedUnionTypeRef;
+
+/**
+ * @enum {string}
+ */
+namespace.NamespacedEnum = {A: 'A', B: 'B'};
 
 /**
  * @const
  */
-var baz = {};
+var othernamespace = {};
 
 /**
- * @type {foo.bar.BarInterface}
+ * Property referring the type of another namespace.
+ *
+ * @type {namespace.nestednamespace.InterfaceFromNestedNamespace}
  */
-baz.barProperty;
+othernamespace.property;
 
 /**
- * @type {foo.FooInterface}
+ * Property referring an namespaced typedef of record defined in another
+ * namespace.
+ *
+ * @type {namespace.NamespacedTypeDefOfRecord}
  */
-baz.fooProperty;
+othernamespace.namespacedTypeDefOfRecordRef;
 
 /**
- * @return {undefined}
+ * Property referring an namespaced union type defined in another namespace.
+ *
+ * @type {namespace.NamespacedUnionType}
  */
-baz.foo = function() {};
+othernamespace.namespacedUnionTypeRef;
+
+/**
+ * Property referring namespaced function type defined in another namespace.
+ *
+ * @type {namespace.NamespacedFunctionType}
+ */
+othernamespace.namespacedFunctionTypeRef;
+
+/**
+ * This namespace defines types only. No Java class will be generated.
+ *
+ * @const
+ */
+var namespacewithtypeonly = {};
+
+/**
+ * @interface
+ */
+namespacewithtypeonly.Interface = function() {};

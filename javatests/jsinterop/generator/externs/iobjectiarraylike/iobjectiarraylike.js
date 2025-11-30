@@ -45,7 +45,7 @@ Bar.prototype.consumeIObjectAndIArrayLike = function(
 /**
  * @param {Object} object
  * @param {IArrayLike<string>} arrayLike
- * @param {function(new:Bar, string)} ctor
+ * @param {?function(new:Bar, string)} ctor
  * @return {undefined}
  */
 Bar.prototype.consumeObjectIArrayLikeAndCtorFn = function(
@@ -72,6 +72,16 @@ Bar.prototype.templatizedObject;
 Bar.prototype.templatizedObjectWithTwoParameters;
 
 /**
+ * @type {Object<string|number, number>}
+ */
+Bar.prototype.templatizedObjectWithStringOrNumberKeys;
+
+/**
+ * @type {Object<string|symbol, number>}
+ */
+Bar.prototype.templatizedObjectWithStringOrSymbolKeys;
+
+/**
  * @interface
  * @extends {IObject<number|string, T>}
  * @extends {IArrayLike<T>}
@@ -82,9 +92,16 @@ function Baz() {}
 /** @constructor */
 function Varargs() {}
 
-// Test a union type in a varargs position.
 /**
+ * @param {Object} obj
  * @param {...Object} var_args
  * @return {void}
  */
-Varargs.prototype.methodWithJsObjectVarargs = function(var_args) {};
+Varargs.prototype.methodWithJsObjectVarargs = function(obj, var_args) {};
+
+/**
+ * @param {Object} object
+ * @param {...IArrayLike<string>} var_args
+ * @return {void}
+ */
+Varargs.prototype.methodWithIArrayLikeVarargs = function(object, var_args) {};

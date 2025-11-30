@@ -30,11 +30,10 @@ Examples:
 
 """
 
-load("@bazel_common_javadoc//:javadoc.bzl", "javadoc_library")
-load("@com_google_j2cl//build_defs:rules.bzl", "j2cl_library")
-load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_library")
-
-_is_bazel = not hasattr(native, "genmpm")  # this_is_bazel
+load("@google_bazel_common//tools/javadoc:javadoc.bzl", "javadoc_library")
+load("@rules_java//java:defs.bzl", "java_library")
+load("@j2cl//build_defs:rules.bzl", "j2cl_library")
+load("@rules_closure//closure:defs.bzl", "closure_js_library")
 
 JS_INTEROP_RULE_NAME_PATTERN = "%s__internal_src_generated"
 
@@ -132,8 +131,7 @@ def _jsinterop_generator_impl(ctx):
     deps_files = _get_generator_files(ctx.attr.deps)
     types_mapping_file = ctx.actions.declare_file("%s_types" % ctx.attr.name)
 
-    if ctx.attr.conversion_mode == "closure":
-        _closure_impl(srcs, deps_files, types_mapping_file, ctx)
+    _closure_impl(srcs, deps_files, types_mapping_file, ctx)
 
     # generate the gwt.xml file by concatenating dependencies gwt inherits files
     gwt_xml_file = ctx.outputs._gwt_xml_file
@@ -163,12 +161,12 @@ def _jsinterop_generator_impl(ctx):
         ctx.outputs._generated_jar.path,
         ctx.outputs._formatted_jar.path,
         ctx.executable._google_java_formatter.path,
-        ctx.executable._jar.path,
+        ctx.executable._zip.path,
     ]
 
     tools = [
         ctx.executable._google_java_formatter,
-        ctx.executable._jar,
+        ctx.executable._zip,
     ]
 
     ctx.actions.run(
@@ -205,14 +203,13 @@ _jsinterop_generator = rule(
         "integer_entities_files": attr.label_list(allow_files = True),
         "wildcard_types_files": attr.label_list(allow_files = True),
         "debug": attr.bool(),
-        "conversion_mode": attr.string(),
         "gwt_module_name": attr.string(),
         "runtime_deps": attr.label_list(),
         "custom_preprocessing_pass": attr.string_list(),
-        "_jar": attr.label(
+        "_zip": attr.label(
             cfg = "exec",
             executable = True,
-            default = Label("@bazel_tools//tools/jdk:jar"),
+            default = Label("@bazel_tools//tools/zip:zipper"),
         ),
         "_google_java_formatter": attr.label(
             cfg = "exec",
@@ -257,7 +254,6 @@ def jsinterop_generator(
         package_prefix = None,
         generate_j2cl_library = True,
         generate_gwt_library = True,
-        conversion_mode = "closure",
         generate_j2cl_build_test = None,
         externs_deps = None,  # Auto-populated from srcs by default.
         runtime_deps = [],
@@ -291,21 +287,19 @@ def jsinterop_generator(
         if not package_prefix:
             package_prefix = _get_java_package(native.package_name())
 
-        if conversion_mode == "closure":
-            if externs_deps == None:
-                # Pass the extern files present in the srcs as deps of the j2cl_library
-                externs_deps = srcs
+        if externs_deps == None:
+            # Pass the extern files present in the srcs as deps of the j2cl_library
+            externs_deps = srcs
 
-            if externs_deps:
-                externs_lib_name = "%s-externs" % name
-                closure_js_library(
-                    name = externs_lib_name,
-                    srcs = externs_deps,
-                )
-                deps_j2cl.append(":%s" % externs_lib_name)
-
-        else:
-            fail("Unknown conversion mode")
+        if externs_deps:
+            externs_lib_name = "%s-externs" % name
+            closure_js_library(
+                name = externs_lib_name,
+                srcs = externs_deps,
+                deps = deps_j2cl,
+                testonly = testonly,
+            )
+            deps_j2cl.append(":%s" % externs_lib_name)
 
         if not extension_type_prefix:
             extension_type_prefix = name[0].upper() + name[1:]
@@ -327,7 +321,6 @@ def jsinterop_generator(
             wildcard_types_files = wildcard_types_files,
             # TODO(dramaix): replace it by a blaze flag
             debug = False,
-            conversion_mode = conversion_mode,
             gwt_module_name = gwt_module_name,
             runtime_deps = runtime_deps,
             custom_preprocessing_pass = custom_preprocessing_pass,
@@ -339,12 +332,14 @@ def jsinterop_generator(
         gwt_xml_file = ":%s.gwt.xml" % gwt_module_name
 
         deps_java += [
-            Label("@com_google_j2cl//:jsinterop-annotations"),
-            Label("@com_google_jsinterop_base//:jsinterop-base"),
+            Label("@j2cl//:jsinterop-annotations"),
+            Label("@jsinterop_base//:jsinterop-base"),
+            Label("//third_party:jspecify_annotations"),
         ]
         deps_j2cl += [
-            Label("@com_google_j2cl//:jsinterop-annotations-j2cl"),
-            Label("@com_google_jsinterop_base//:jsinterop-base-j2cl"),
+            Label("@j2cl//:jsinterop-annotations-j2cl"),
+            Label("@jsinterop_base//:jsinterop-base-j2cl"),
+            Label("//third_party:jspecify_annotations-j2cl"),
         ]
 
     else:
@@ -374,24 +369,17 @@ def jsinterop_generator(
         )
 
     if generate_gwt_library:
-        java_library_args = {
-            "name": name,
-            "srcs": generated_jars,
-            "deps": deps_java,
-            "exports": exports_java,
-            "visibility": visibility,
-            "testonly": testonly,
-        }
-
-        # bazel doesn't support constraint and gwtxml attributes
-        if _is_bazel:
-            if gwt_xml_file:
-                java_library_args["resources"] = [gwt_xml_file]
-        else:
-            java_library_args["gwtxml"] = gwt_xml_file
-            java_library_args["constraints"] = ["gwt", "public"]
-
-        native.java_library(**java_library_args)
+        java_library(
+            name = name,
+            srcs = generated_jars,
+            deps = deps_java,
+            exports = exports_java,
+            resources = [gwt_xml_file] if gwt_xml_file else [],
+            visibility = visibility,
+            testonly = testonly,
+            # Keep compatibility with Java 11 for open source GWT.
+            javacopts = ["-source 11 -target 11"],
+        )
 
     _extract_srcjar(
         name = name + "_generated_files",

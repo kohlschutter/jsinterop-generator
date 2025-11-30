@@ -5,10 +5,9 @@ jsinterop_generator_import() target to be directly depended upon from jsinterop_
 targets.
 """
 
-load("@com_google_j2cl//build_defs:rules.bzl", "j2cl_library")
+load("@rules_java//java:defs.bzl", "java_library")
+load("@j2cl//build_defs:rules.bzl", "j2cl_library")
 load(":jsinterop_generator.bzl", "JS_INTEROP_RULE_NAME_PATTERN", "JsInteropGeneratorInfo")
-
-_is_bazel = not hasattr(native, "genmpm")  # this_is_bazel
 
 def _jsinterop_generator_import_impl(ctx):
     # expose files and properties used when the target is used as dependency
@@ -37,6 +36,7 @@ def jsinterop_generator_import(
         types_mapping_files = [],
         gwt_module_name = None,
         gwt_xml = None,
+        enable_jspecify_support = False,
         visibility = None):
     _jsinterop_generator_import(
         name = JS_INTEROP_RULE_NAME_PATTERN % name,
@@ -45,32 +45,28 @@ def jsinterop_generator_import(
         gwt_module_name = gwt_module_name,
     )
 
-    java_library_args = {
-        "name": name,
-        "srcs": srcs,
-        "deps": [
-            Label("@com_google_j2cl//:jsinterop-annotations"),
-            Label("@com_google_jsinterop_base//:jsinterop-base"),
+    java_library(
+        name = name,
+        srcs = srcs,
+        deps = [
+            Label("@j2cl//:jsinterop-annotations"),
+            Label("@jsinterop_base//:jsinterop-base"),
+            Label("//third_party:jspecify_annotations"),
         ],
-        "visibility": visibility,
-    }
-
-    if gwt_xml:
-        # bazel doesn't support constraint and gwtxml attributes
-        if _is_bazel:
-            java_library_args["resources"] = [gwt_xml]
-        else:
-            java_library_args["gwtxml"] = gwt_xml
-            java_library_args["constraints"] = ["gwt", "public"]
-
-    native.java_library(**java_library_args)
+        resources = [gwt_xml] if gwt_xml else [],
+        visibility = visibility,
+        # Keep compatibility with Java 11 for open source GWT.
+        javacopts = ["-source 11 -target 11"],
+    )
 
     j2cl_library(
         name = "%s-j2cl" % name,
         srcs = srcs,
         visibility = visibility,
         deps = [
-            Label("@com_google_j2cl//:jsinterop-annotations-j2cl"),
-            Label("@com_google_jsinterop_base//:jsinterop-base-j2cl"),
+            Label("@j2cl//:jsinterop-annotations-j2cl"),
+            Label("@jsinterop_base//:jsinterop-base-j2cl"),
+            Label("//third_party:jspecify_annotations-j2cl"),
         ],
+        experimental_enable_jspecify_support_do_not_enable_without_jspecify_static_checking_or_you_might_cause_an_outage = enable_jspecify_support,
     )

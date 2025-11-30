@@ -7,14 +7,16 @@ import jsinterop.annotations.JsType;
 import jsinterop.base.Js;
 import jsinterop.base.JsPropertyMap;
 import jsinterop.generator.externs.dependency.thirdparty.ThirdPartyClass;
+import jsinterop.generator.externs.dependency.thirdparty.namespace1.InterfaceWithConflictingName;
 import jsinterop.generator.externs.dependency.thirdparty2.ThirdParty2Class;
+import org.jspecify.annotations.Nullable;
 
 @JsType(isNative = true, name = "ThirdPartyClass", namespace = JsPackage.GLOBAL)
-public class MyLibThirdPartyClass<T> extends ThirdPartyClass<T> {
+public class MyLibThirdPartyClass<T extends @Nullable Object> extends ThirdPartyClass<T> {
   @JsType(isNative = true, name = "?", namespace = JsPackage.GLOBAL)
-  public interface ExtraMethodBarType<T> {
+  public interface ExtraMethodBarType<T extends @Nullable Object> {
     @JsOverlay
-    static MyLibThirdPartyClass.ExtraMethodBarType create() {
+    static <T extends @Nullable Object> MyLibThirdPartyClass.ExtraMethodBarType<T> create() {
       return Js.uncheckedCast(JsPropertyMap.of());
     }
 
@@ -26,9 +28,10 @@ public class MyLibThirdPartyClass<T> extends ThirdPartyClass<T> {
   }
 
   @JsType(isNative = true, name = "?", namespace = JsPackage.GLOBAL)
-  public interface ExtraMethodBarUnionType<T> {
+  public interface ExtraMethodBarUnionType<T extends @Nullable Object> {
     @JsOverlay
-    static MyLibThirdPartyClass.ExtraMethodBarUnionType of(Object o) {
+    static <T extends @Nullable Object> MyLibThirdPartyClass.ExtraMethodBarUnionType<T> of(
+        Object o) {
       return Js.cast(o);
     }
 
@@ -48,17 +51,24 @@ public class MyLibThirdPartyClass<T> extends ThirdPartyClass<T> {
     return Js.cast(o);
   }
 
-  public ThirdParty2Class extraField;
+  public @Nullable ThirdParty2Class extraField;
+  public @Nullable InterfaceWithConflictingName extraField2;
+  public jsinterop.generator.externs.dependency.thirdparty2.namespace2.@Nullable
+      InterfaceWithConflictingName
+      extraField3;
 
   public MyLibThirdPartyClass(ThirdPartyClass.ConstructorFooUnionType foo) {
+    // This super call is here only for the code to compile; it is never executed.
     super((ThirdPartyClass.ConstructorFooUnionType) null);
   }
 
   public MyLibThirdPartyClass(String foo) {
+    // This super call is here only for the code to compile; it is never executed.
     super((ThirdPartyClass.ConstructorFooUnionType) null);
   }
 
   public MyLibThirdPartyClass(double foo) {
+    // This super call is here only for the code to compile; it is never executed.
     super((ThirdPartyClass.ConstructorFooUnionType) null);
   }
 
