@@ -10,8 +10,11 @@ local_path_override(
 
 # TODO: drop this once jsinterop_base is in BCR.
 bazel_dep(name = "jsinterop_base", repo_name = "com_google_jsinterop_base")
-archive_override(
-    module_name = "jsinterop_base",
-    strip_prefix = "jsinterop-base-master",
-    urls = ["https://github.com/google/jsinterop-base/archive/master.zip"],
-)
+#archive_override(
+#    module_name = "jsinterop_base",
+#    strip_prefix = "jsinterop-base-master",
+#    urls = ["https://github.com/google/jsinterop-base/archive/master.zip"],
+#)
+
+local_path_override(module_name = "jsinterop_base", path = "../../../jacline-jsinterop-base/jsinterop-base")
+
